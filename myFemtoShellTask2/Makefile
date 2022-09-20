@@ -17,15 +17,27 @@ help         --> prints help message
 endef
 
 
-enable_gdb = TRUE
+enable_gdb =FALSE
+linking_type =dynamic
 
 all : myFemtoShell
 
 myFemtoShell : myFemtoShell.o libcommand.a
+
 ifeq ($(enable_gdb),TRUE)
+ ifeq ($(linking_type),dynamic)
 	gcc myFemtoShell.o -o myFemtoShell -ggdb -lcommand -L./ 
-else 
-	gcc myFemtoShell.o -o myFemtoShell -lcommand -L./
+
+ else
+	gcc myFemtoShell.o -o myFemtoShell -ggdb --static -lcommand -L./
+ endif
+ 
+else
+ ifeq ($(linking_type),dynamic)
+	gcc myFemtoShell.o -o myFemtoShell -lcommand -L./ 
+ else
+	gcc myFemtoShell.o -o myFemtoShell --static -lcommand -L./
+ endif	
 endif
 
 myFemtoShell.o:myFemtoShell.c

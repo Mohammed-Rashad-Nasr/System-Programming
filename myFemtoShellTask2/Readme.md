@@ -15,3 +15,10 @@ clean_lib    --> cleans the created library
 help         --> prints help message 
 
 
+
+configurations 
+********************************
+
+enable_gdb   --> TRUE or FALSE  for adding or removing debugging options 
+linking_type --> choose linking type either static or dynamic
+
