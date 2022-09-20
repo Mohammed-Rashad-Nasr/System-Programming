@@ -10,6 +10,8 @@ clean_exec   --> cleans the created executable
 
 clean_object --> cleans the created object.o file
 
+clean_lib    --> cleans the created library
+
 help         --> prints help message 
 
 
