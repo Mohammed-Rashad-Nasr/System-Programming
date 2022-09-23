@@ -21,4 +21,10 @@ configurations
 
 enable_gdb   --> TRUE or FALSE  for adding or removing debugging options 
 linking_type --> choose linking type either static or dynamic
+lib          --> library type static or shared
+
+
+notes
+********************************
+*--> if you're using shared library please remember to add its path to system anvironment 
 
