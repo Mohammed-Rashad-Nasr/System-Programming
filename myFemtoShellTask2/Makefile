@@ -19,41 +19,69 @@ endef
 
 enable_gdb =FALSE
 linking_type =dynamic
+lib=shared
+
+
+ifeq ($(lib),shared)
+libname:=libcommand.so 
+
+else 
+libname:=libcommand.a 
+
+endif
+
 
 all : myFemtoShell
 
-myFemtoShell : myFemtoShell.o libcommand.a
+myFemtoShell : myFemtoShell.o $(libname)
 
 ifeq ($(enable_gdb),TRUE)
- ifeq ($(linking_type),dynamic)
+ifeq ($(linking_type),dynamic)
 	gcc myFemtoShell.o -o myFemtoShell -ggdb -lcommand -L./ 
 
- else
+else
 	gcc myFemtoShell.o -o myFemtoShell -ggdb --static -lcommand -L./
- endif
+endif
  
 else
- ifeq ($(linking_type),dynamic)
+ifeq ($(linking_type),dynamic)
 	gcc myFemtoShell.o -o myFemtoShell -lcommand -L./ 
- else
+else
 	gcc myFemtoShell.o -o myFemtoShell --static -lcommand -L./
- endif	
+endif	
 endif
-
+ 
 myFemtoShell.o:myFemtoShell.c
 	gcc -c myFemtoShell.c -o myFemtoShell.o
 
-libcommand.a:rand.o fact.o fib.o
+$(libname):rand.o fact.o fib.o
+ifeq ($(libname),libcommand.a )
 	ar -rs libcommand.a rand.o fact.o fib.o
+else
+	gcc -shared rand.o fact.o fib.o -o libcommand.so
+endif
 
 rand.o:rand.c
-	gcc -c rand.c 
+ifeq ($(lib),shared)
+	gcc -c -fPIC rand.c 
+else 
+	gcc -c rand.c
+endif
 
 fact.o:fact.c
+ifeq ($(lib),shared)
+	gcc -c -fPIC fact.c 
+else 
 	gcc -c fact.c
+endif
+
 
 fib.o:fib.c
+ifeq ($(lib),shared)
+	gcc -c -fPIC fib.c 
+else 
 	gcc -c fib.c
+endif
 
 run : myFemtoShell
 	./myFemtoShell
