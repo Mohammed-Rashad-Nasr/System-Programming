@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <string.h>
+int main (){
+
+	while(1){
+		char buff[100];
+		printf("my amazing shell >> ");
+		fgets(buff,100,stdin);
+		if (buff[0]=='\n') continue ;
+		buff[strlen(buff)-1] = '\0';
+		char command [strlen(buff)];
+	//	printf("entered : %s \n",buff);
+		strcpy(command , buff);
+	//	printf("command %s \n",command);
+		char * margv [] = {command,NULL};
+		char * menvp [] = {NULL};
+		int waitstat = 0 ;
+		int ret = fork();
+		if (ret >0){
+		//	printf("parent\n");
+			wait(&waitstat);
+		}else if (ret == 0 ){
+		//	printf("child\n");
+		//	strcpy(margv[0],command);
+			execve(command , margv,menvp);
+			printf("exec failed\n");
+			return -1 ;
+		}else printf("not forked\n");
+
+	}
+
+
+}
+
