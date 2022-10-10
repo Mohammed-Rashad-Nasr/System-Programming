@@ -21,7 +21,7 @@ int main()
     stdo = fileno(stdout);
     stdi = fileno(stdin);
     while (1) {
-    int new = 0;
+    int size = 0;
 	resetOut();
 	char buff[100];
 	green();
