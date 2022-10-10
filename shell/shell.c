@@ -9,7 +9,9 @@
 #include <fcntl.h>
 #include "header.h"
 
-
+extern int varcount ;
+extern variable vararr[100];
+extern int out, in, err, stdi, stde, stdo;
 int size = 0;
 int main()
 {
