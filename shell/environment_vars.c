@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "header.h"
 
 int varcount = 0;
