@@ -13,33 +13,37 @@ typedef struct {
 } variable;
 int varcount = 0;
 variable vararr[100];
-int out ,in,err,stdi,stde,stdo;
-void changeOut(char * path){
+int out, in, err, stdi, stde, stdo;
+void changeOut(char *path)
+{
 
-out = open(path, O_CREAT|O_WRONLY,0755);
-stdo = dup(fileno(stdout));
-dup2(out,fileno(stdout));
-
-}
-
-void changeIn(char * path){
-
-in = open(path, O_CREAT|O_RDONLY,0755);
-stdi = dup(fileno(stdin));
-dup2(in,fileno(stdin));
+    out = open(path, O_CREAT | O_WRONLY, 0755);
+    stdo = dup(fileno(stdout));
+    dup2(out, fileno(stdout));
 
 }
 
-void resetOut(){
-        fflush(stdin);
-	fflush(stdout);
-	dup2(stdo,fileno(stdout));
+void changeIn(char *path)
+{
+
+    in = open(path, O_CREAT | O_RDONLY, 0755);
+    stdi = dup(fileno(stdin));
+    dup2(in, fileno(stdin));
+
 }
 
-void resetIn(){
-   fflush(stdout);
-   fflush(stdin);
-   dup2(stdi,fileno(stdin));
+void resetOut()
+{
+    fflush(stdin);
+    fflush(stdout);
+    dup2(stdo, fileno(stdout));
+}
+
+void resetIn()
+{
+    fflush(stdout);
+    fflush(stdin);
+    dup2(stdi, fileno(stdin));
 }
 
 
@@ -85,7 +89,7 @@ int isenv(char *c)
     while (c[i] != '\0') {
 	if (c[i] == '=') {
 	    return 1;
-	    
+
 	}
 	i++;
     }
@@ -159,24 +163,26 @@ int simicount(char *c)
 }
 
 
-int ispipe(char*s){
-int i = 0 ;
-while (s[i]!='\0') {
-	
-	if(s[i]=='|') return 1 ;
+int ispipe(char *s)
+{
+    int i = 0;
+    while (s[i] != '\0') {
+
+	if (s[i] == '|')
+	    return 1;
 	i++;
-}
-return 0 ;
+    }
+    return 0;
 }
 
 int size = 0;
 int main()
 {
-	stdo = fileno(stdout);
-        stdi = fileno(stdin);
+    stdo = fileno(stdout);
+    stdi = fileno(stdin);
     while (1) {
-	
-        resetOut();
+
+	resetOut();
 	char buff[100];
 	green();
 	printf("my amazing shell >> ");
@@ -200,176 +206,176 @@ int main()
 	    divider = strtok(NULL, ";");
 	    elements++;
 	}
-        //for ( int p = 0 ; p< elements ; p++) printf("%d->%s\n",p,sentance[p]);
-        //printf("number of elements : %d \n",elements);
+	//for ( int p = 0 ; p< elements ; p++) printf("%d->%s\n",p,sentance[p]);
+	//printf("number of elements : %d \n",elements);
 	for (int sent = 1; sent < elements; sent++) {
 	    char tmp[strlen(sentance[sent])];
 	    strcpy(tmp, sentance[sent]);
-	    int pipeflag= ispipe(tmp);
-	    if(!pipeflag)
-	    {
+	    int pipeflag = ispipe(tmp);
+	    if (!pipeflag) {
 
-	    int count = 0;
-	    char *tok = strtok(tmp, " ");
-	    char *command = tok;
-	    while (tok) {
+		int count = 0;
+		char *tok = strtok(tmp, " ");
+		char *command = tok;
+		while (tok) {
 
-		count++;
-		tok = strtok(NULL, " ");
-	    }
+		    count++;
+		    tok = strtok(NULL, " ");
+		}
 
-	    char *margv[count + 1];
+		char *margv[count + 1];
 
-	    char *vars[100];
-	    int i = 0;
+		char *vars[100];
+		int i = 0;
 
-	    char *p;
-	    p = strtok(sentance[sent], " ");
+		char *p;
+		p = strtok(sentance[sent], " ");
 
-	    int e = size;
-	    int ex = 0;
-	    int reo = 0 , rei = 0;
-	    while (p != NULL) {
-		if (p[0] != '#') {
-		    if (!isenv(p)) {
-			if (ex == 0) {
-			if (reo == 0){
-		        if (rei==0){    
-			    if (p[0] == '$') {
-				char searcher[strlen(p)];
-				int sc = 1;
-				while (p[sc] != '\0') {
-				    searcher[sc - 1] = p[sc];
-				    sc++;
+		int e = size;
+		int ex = 0;
+		int reo = 0, rei = 0;
+		while (p != NULL) {
+		    if (p[0] != '#') {
+			if (!isenv(p)) {
+			    if (ex == 0) {
+				if (reo == 0) {
+				    if (rei == 0) {
+					if (p[0] == '$') {
+					    char searcher[strlen(p)];
+					    int sc = 1;
+					    while (p[sc] != '\0') {
+						searcher[sc - 1] = p[sc];
+						sc++;
+					    }
+					    searcher[sc - 1] = '\0';
+
+					    margv[i++] =
+						vararr[search(searcher)].
+						value;
+					} else if (strcmp(p, "export") ==
+						   0)
+					    ex = 1;
+					else if (strcmp(p, "list") == 0)
+					    printvars();
+
+					else if (strcmp(p, ">") == 0)
+					    reo = 1;
+
+					else if (strcmp(p, "<") == 0)
+					    rei = 1;
+					else
+					    margv[i++] = p;
+				    } else {
+					changeIn(p);
+					rei = 0;
+				    }
+				} else {
+
+				    changeOut(p);
+				    reo = 0;
 				}
-				searcher[sc - 1] = '\0';
-				
-				margv[i++] =
-				    vararr[search(searcher)].value;
-			    } else if (strcmp(p, "export") == 0)
-				ex = 1;
-			    else if (strcmp(p, "list") == 0)
-				printvars();
-			    
-			    else if (strcmp(p,">")==0)
-				reo = 1 ;
-			    
-			    else if (strcmp(p,"<")==0)
-				    rei = 1;
-			    else
-				margv[i++] = p;
-			}else{
-				changeIn(p);
-				rei=0;
-			}
-			}else {
+			    } else {
 
-				changeOut(p);
-				reo=0;
-			}	
+
+				if (setenv
+				    (vararr[search(p)].name,
+				     vararr[search(p)].value, 1) != 0)
+				    perror("not set :");
+				ex = 0;
+			    }
 			} else {
-			    
+			    char template[strlen(p)];
+			    strcpy(template, p);
 
-			    if (setenv
-				(vararr[search(p)].name,
-				 vararr[search(p)].value, 1) != 0)
-				perror("not set :");
-			    ex = 0;
+			    vars[e] =
+				(char *) malloc(strlen(p) * sizeof(char));
+			    strcpy(vars[e], p);
+			    e++;
+
+
 			}
-		    } else {
-			char template[strlen(p)];
-			strcpy(template, p);
-		
-			vars[e] =
-			    (char *) malloc(strlen(p) * sizeof(char));
-			strcpy(vars[e], p);
-			e++;
-			
+			p = strtok(NULL, " ");
+		    } else
+			break;
+		}
 
-		    }
-		    p = strtok(NULL, " ");
-		} else
-		    break;
+		for (int cc = size; cc < e; cc++)
+		    construct(vars[cc]);
+		size += envcounter;
+
+		int waitstat = 0;
+
+		margv[i] = NULL;
+		vars[size] = NULL;
+
+
+		if (margv[0] != NULL) {
+		    int ret = fork();
+		    if (ret > 0) {
+
+			wait(&waitstat);
+			resetOut();
+			resetIn();
+			fflush(stdout);
+			fflush(stdin);
+			//reo=0;
+		    } else if (ret == 0) {
+
+			execvp(command, margv);
+			red();
+
+			printf("exec failed\n");
+			perror("the error is : ");
+			reset();
+			return -1;
+		    } else
+			printf("not forked\n");
+
+
+		}
 	    }
 
-	    for (int cc = size; cc < e; cc++)
-		construct(vars[cc]);
-	    size += envcounter;
+	    else {
 
-	    int waitstat = 0;
+		FILE *pipe_fp, *infile;
+		char readbuf[80];
+		char arg1[50];
+		char arg2[50];
+		char *p = strtok(tmp, "|");
+		strcpy(arg1, p);
+		while (p != NULL) {
 
-	    margv[i] = NULL;
-	    vars[size] = NULL;
-	  
+		    strcpy(arg2, p);
+		    p = strtok(NULL, "|");
+		}
+		/* Open up input file */
 
-	    if (margv[0] != NULL) {
-		int ret = fork();
-		if (ret > 0) {
+		if ((infile = popen(arg1, "r")) == NULL) {
+		    perror("popen1");
+		    exit(1);
+		}
 
-		    wait(&waitstat);
-		    resetOut();
-		    resetIn();
-		    fflush(stdout);
-		    fflush(stdin);
-		    //reo=0;
-		} else if (ret == 0) {
+		/* Create one way pipe line with call to popen() */
+		if ((pipe_fp = popen(arg2, "w")) == NULL) {
+		    perror("popen2");
+		    exit(1);
+		}
 
-		    execvp(command, margv);
-		    red();
-		    
-		    printf("exec failed\n");
-		    perror("the error is : ");
-		    reset();
-		    return -1;
-		} else
-		    printf("not forked\n");
-		
+		/* Processing loop */
+		do {
+		    fgets(readbuf, 80, infile);
+		    if (feof(infile))
+			break;
+
+		    fputs(readbuf, pipe_fp);
+		} while (!feof(infile));
+
+		pclose(infile);
+		pclose(pipe_fp);
+		fflush(stdin);
+		fflush(stdout);
 
 	    }
 	}
-   
-	else{
- 
-		      FILE *pipe_fp, *infile;
-        char readbuf[80];
-        char  arg1 [50] ;
-        char  arg2 [50] ;
-        char * p = strtok(tmp , "|");
-        strcpy(arg1,p);
-        while(p!=NULL){
-
-strcpy(arg2,p);
-p=strtok(NULL,"|");
-        }
-        /* Open up input file */
-
-        if (( infile = popen(arg1, "r")) == NULL)
-        {
-                perror("popen1");
-                exit(1);
-        }
-
-        /* Create one way pipe line with call to popen() */
-       if (( pipe_fp = popen(arg2, "w")) == NULL)
-        {
-                perror("popen2");
-                exit(1);
-        }
-
-        /* Processing loop */
-        do {
-                fgets(readbuf, 80, infile);
-                if(feof(infile)) break;
-
-                fputs(readbuf, pipe_fp);
-        } while(!feof(infile));
-
-        pclose(infile);
-        pclose(pipe_fp);
-        fflush(stdin);
-	fflush(stdout);
-
-	}
-    }
     }
 }
