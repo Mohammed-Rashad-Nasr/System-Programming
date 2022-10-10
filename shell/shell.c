@@ -19,16 +19,18 @@ extern int out, in, err, stdi, stde, stdo;
 int main()
 {
     stdo = fileno(stdout);
-    stdi = fileno(stdin);
+    stdi = fileno(stdin) ;
+	
+	
     while (1) {
 		
 		
 		
 		char buffer[100];
 		
-		green();
+		green ();
 		printf("my amazing shell >> ");
-		reset();
+		reset ();
 	
 		fgets(buffer, 100, stdin);
 		
@@ -39,148 +41,204 @@ int main()
 		
 		buffer[strlen(buffer) - 1] = '\0';
 		
-		//int envcounter = countenv(buffer);
+		
 		char line[strlen(buffer)];
-		strcpy(line, buffer);
+		strcpy   (line, buffer);
 		
 		char *sentence[simicount(buffer)];
 		
-		char *sentenceDivider = strtok(line, ";");
-		//sentence[0] = (char *) malloc(strlen(sentenceDivider) * sizeof(char));
-		int elements = 0;
-		while (sentenceDivider != NULL) {
-			sentence[elements] =
-			(char *) malloc(strlen(sentenceDivider) * sizeof(char));
-			strcpy(sentence[elements], sentenceDivider);
-			sentenceDivider = strtok(NULL,";");
-			elements++;
+		char *sentenceDivider  = strtok(line, ";");
+		
+		int  sentencesCounter  = 0;
+		
+		while (sentenceDivider != NULL) 
+		{
+			
+			sentence[sentencesCounter] = (char *) malloc(strlen(sentenceDivider) * sizeof(char));
+			strcpy                       (sentence[sentencesCounter], sentenceDivider);
+			sentenceDivider            = strtok(NULL,";");
+			sentencesCounter++;
+		
 		}
 		
-		for (int sent = 0; sent < elements; sent++) {
-			char tmp[strlen(sentence[sent])];
-			strcpy(tmp, sentence[sent]);
-			int pipeflag = ispipe(tmp);
-			if (!pipeflag) {
-	
-			int count = 0;
-			char *tok = strtok(tmp, " ");
-			char *command = tok;
-			while (tok) {
-	
-				count++;
-				tok = strtok(NULL, " ");
-			}
-	
-			char *margv[count + 1];
-	
-			char *vars[100];
-			int i = 0;
-	
-			char *p;
-			p = strtok(sentence[sent], " ");
-	
-			int e = 0;
-			int ex = 0;
-			int reo = 0, rei = 0;
-			while (p != NULL) {
-				if (p[0] != '#') {
-				if (!isenv(p)) {
-					if (ex == 0) {
-					if (reo == 0) {
-						if (rei == 0) {
-						if (p[0] == '$') {
-							char searcher[strlen(p)];
-							int sc = 1;
-							while (p[sc] != '\0') {
-							searcher[sc - 1] = p[sc];
-							sc++;
-							}
-							searcher[sc - 1] = '\0';
-	
-							margv[i++] =
-							vararr[search(searcher)].
-							value;
-						} else if (strcmp(p, "export") ==
-							0)
-							ex = 1;
-						else if (strcmp(p, "list") == 0)
-							printvars();
-	
-						else if (strcmp(p, ">") == 0)
-							reo = 1;
-	
-						else if (strcmp(p, "<") == 0)
-							rei = 1;
-						else
-							margv[i++] = p;
-						} else {
-						changeIn(p);
-						rei = 0;
-						}
-					} else {
-	
-						changeOut(p);
-						reo = 0;
-					}
-					} else {
-	
-	
-					if (setenv
-						(vararr[search(p)].name,
-						vararr[search(p)].value, 1) != 0)
-						perror("not set :");
-					ex = 0;
-					}
-				} else {
-					char template[strlen(p)];
-					strcpy(template, p);
-					if (vars[e]==NULL)
-					vars[e] =
-					(char *) malloc(strlen(p) * sizeof(char));
-					strcpy(vars[e], p);
-					e++; 
-	
-	
-				}
-				p = strtok(NULL, " ");
-				} else
-				break;
-			}
-	
-			for (int cc = 0; cc < e; cc++)
-				construct(vars[cc]);
-			
-	
-			int waitstat = 0;
-	
-			margv[i] = NULL;
-			vars[varcount] = NULL;
-	
-	
-			if (margv[0] != NULL) {
-				int ret = fork();
-				if (ret > 0) {
-	
-				wait(&waitstat);
-				resetOut();
-				resetIn();
-				fflush(stdout);
-				fflush(stdin);
+		
+		
+		for (int sentenceIterator = 0; sentenceIterator < sentencesCounter; sentenceIterator++)
+		{
 				
-				} else if (ret == 0) {
+			char tmp[strlen(sentence[sentenceIterator])];
+			strcpy  (tmp,   sentence[sentenceIterator]) ;
+			int  pipeFlag = ispipe(tmp);
+			
+			
+			if (!pipeFlag) 
+			{
 	
-				execvp(command, margv);
-				red();
-	
-				printf("exec failed\n");
-				perror("the error is : ");
-				reset();
-				return -1;
-				} else
-				printf("not forked\n");
-	
-	
-			}
+				int  argsCounter  = 0;
+				char *countDivider = strtok(tmp, " ");
+				char *command     = countDivider;
+				
+				while (countDivider) 
+				{
+		
+					argsCounter++;
+					countDivider = strtok(NULL, " ");
+				
+				}
+		
+				char *margv[argsCounter + 1];
+				char *vars [100];
+				
+				int argsIterator = 0;
+		
+				char *currentArgument = strtok(sentence[sentenceIterator], " ");
+				
+		
+				int newVars            = 0;
+				int exportFlag         = 0;
+				int outRedirectionFlag = 0;
+				int inRedirectionFlag  = 0;
+				
+				
+				while (currentArgument != NULL) 
+				{
+			
+					if (currentArgument[0] != '#') 
+					{
+						if (!isenv(currentArgument)) 
+						{
+							
+							if (exportFlag == 0) 
+							{
+								
+								if (outRedirectionFlag == 0) 
+								{
+									
+									if (inRedirectionFlag == 0) 
+									{
+										
+										if (currentArgument[0] == '$')
+										{
+											
+											char searcher[strlen(currentArgument)];
+											int  searchCounter = 1;
+											
+											while (currentArgument[searchCounter] != '\0') 
+											{
+												
+												searcher[searchCounter - 1] = currentArgument[searchCounter];
+												searchCounter++;
+												
+											}
+											
+											searcher[searchCounter - 1] = '\0';
+											margv   [argsIterator++]               = vararr[search(searcher)].value;
+											
+										}
+										
+										else if (strcmp(currentArgument, "export") == 0)
+											exportFlag = 1;
+										
+										else if (strcmp(currentArgument, "list"  ) == 0)
+											printvars();
+					
+										else if (strcmp(currentArgument, ">"     ) == 0)
+											outRedirectionFlag = 1;
+					
+										else if (strcmp(currentArgument, "<") == 0)
+											inRedirectionFlag = 1;
+										
+										else
+											margv[argsIterator++] = currentArgument;
+										
+									}
+									else 
+									{
+										
+										changeIn(currentArgument);
+										inRedirectionFlag = 0;
+									
+									}
+									
+								} 
+								else 
+								{
+				
+									changeOut(currentArgument);
+									outRedirectionFlag = 0;
+									
+								}
+							} 
+							else 
+							{
+			
+								if (setenv(vararr[search(currentArgument)].name,vararr[search(currentArgument)].value, 1) != 0)
+									perror("not set :");
+								exportFlag = 0;
+								
+							}
+							
+						}
+						else
+						{
+							
+							//char template[strlen(currentArgument)];
+							//strcpy(template, currentArgument);
+							if (vars[newVars]==NULL)
+								vars[newVars] = (char *) malloc(strlen(currentArgument) * sizeof(char));
+							
+							strcpy(vars[newVars], currentArgument);
+							newVars++; 
+			
+						}
+						currentArgument = strtok(NULL, " ");
+					} 
+					else
+						break;
+					
+				}
+		
+				for (int newVarsIterator = 0; newVarsIterator < newVars; newVarsIterator++)
+					construct(vars[newVarsIterator]);
+				
+		
+				int waitstat = 0;
+		
+				margv[argsIterator] = NULL;
+				vars [varcount]     = NULL;
+		
+		
+				if (margv[0] != NULL) 
+				{
+					
+					int ret = fork();
+					
+					if (ret > 0)
+					{
+		
+						wait(&waitstat);
+						resetOut();
+						resetIn();
+						fflush(stdout);
+						fflush(stdin);
+					
+					} 
+					else if (ret == 0)
+					{
+		
+						execvp(command, margv);
+						red();
+			
+						printf("exec failed\n");
+						perror("the error is : ");
+						reset();
+						return -1;
+						
+					} 
+					else
+						printf("not forked\n");
+					
+				}
 			}
 	
 			else {
@@ -189,12 +247,12 @@ int main()
 			char readbuf[80];
 			char arg1[50];
 			char arg2[50];
-			char *p = strtok(tmp, "|");
-			strcpy(arg1, p);
-			while (p != NULL) {
+			char *currentArgument = strtok(tmp, "|");
+			strcpy(arg1, currentArgument);
+			while (currentArgument != NULL) {
 	
-				strcpy(arg2, p);
-				p = strtok(NULL, "|");
+				strcpy(arg2, currentArgument);
+				currentArgument = strtok(NULL, "|");
 			}
 			/* Open up input file */
 	
