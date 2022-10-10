@@ -8,11 +8,11 @@ typedef struct {
     char value[100];
 } variable;
 
-int varcount = 0;
 
-variable vararr[100];
 
-int out, in, err, stdi, stde, stdo;
+
+
+
 
 
 extern int  search      (char *s);
