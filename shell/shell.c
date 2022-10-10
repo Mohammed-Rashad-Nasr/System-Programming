@@ -12,13 +12,16 @@
 extern int varcount ;
 extern variable vararr[100];
 extern int out, in, err, stdi, stde, stdo;
-int size = 0;
+
+
+
+
 int main()
 {
     stdo = fileno(stdout);
     stdi = fileno(stdin);
     while (1) {
-
+    int new = 0;
 	resetOut();
 	char buff[100];
 	green();
@@ -67,7 +70,7 @@ int main()
 		char *p;
 		p = strtok(sentance[sent], " ");
 
-		int e = size;
+		int e = 0;
 		int ex = 0;
 		int reo = 0, rei = 0;
 		while (p != NULL) {
@@ -122,11 +125,11 @@ int main()
 			} else {
 			    char template[strlen(p)];
 			    strcpy(template, p);
-
+                if (vars[e]==NULL)
 			    vars[e] =
 				(char *) malloc(strlen(p) * sizeof(char));
 			    strcpy(vars[e], p);
-			    e++;
+			    e++; 
 
 
 			}
@@ -135,14 +138,14 @@ int main()
 			break;
 		}
 
-		for (int cc = size; cc < e; cc++)
+		for (int cc = 0; cc < e; cc++)
 		    construct(vars[cc]);
-		size += envcounter;
+		//size += envcounter;
 
 		int waitstat = 0;
 
 		margv[i] = NULL;
-		vars[size] = NULL;
+		vars[varcount] = NULL;
 
 
 		if (margv[0] != NULL) {
