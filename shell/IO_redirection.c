@@ -6,7 +6,7 @@
 #include <errno.h>
 #include "header.h"
 
-
+int out, in, err, stdi, stde, stdo;
 
 
 void changeOut(char *path)
