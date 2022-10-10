@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "header.h"
 
-
-
+int varcount = 0;
+variable vararr[100];
 int search(char *s)
 {
     int i = 0;
