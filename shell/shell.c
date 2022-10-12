@@ -60,7 +60,7 @@ int main()
 		green ();                        //change color to green *
 		printf("my amazing shell >> ");  //print msg             *  
 		reset ();                        //reset color to white  *
-	        //********************************************************
+	    //********************************************************
 		//********************************************************
 		
 		
@@ -69,7 +69,7 @@ int main()
 		
 		//********************************************
 		if (buffer[0] == '\n')      //new line case **
-			continue;                           /*
+			continue;                               /*
 		//*******************************************/
 		
 		
@@ -156,7 +156,7 @@ int main()
 					countDivider = strtok(NULL, " ");
 				
 				}
-		               //********************************************************
+		        //********************************************************
 				
 				
 				int newVars            = 0;     //new variables counter for variables entered in this sentence
@@ -171,7 +171,7 @@ int main()
 		
 		
 		
-	        	        //***** divide sentence on space for checking and using them ***********	
+	        	//***** divide sentence on space for checking and using them ***********	
 				//**********************************************************************
 				
 				char *currentArgument = strtok(sentence[sentenceIterator], " "); 		
@@ -184,14 +184,14 @@ int main()
 			
 					if (currentArgument[0] != '#')     // check if this is a comment starting by # so it will skip all the sentence if no just go inside 
 					{ 
-					        //************************ it is not a comment ************************
+					    //************************ it is not a comment ************************
 						//*********************************************************************
 						
 						if (!isenv(currentArgument))      // check if this is an environment variable if not continue inside 
 						{
 							
 							//************************ it is not an environment variable **********
-						        //*********************************************************************
+						    //*********************************************************************
 							
 							if (exportFlag == 0)             //check if this is an argument of export function by checking export flag which may be set in the previous word if not just continue inside
 							{
@@ -215,7 +215,7 @@ int main()
 										{
 											
 											//*************** access environment variable using $ operator ********
-									                //*********************************************************************
+									        //*********************************************************************
 											
 											
 											// replace $name by name to search for it *****************************
@@ -300,7 +300,7 @@ int main()
 							else 
 							{
 								//*** export flag raised now find & export the given variable  ****************
-			                                        //*****************************************************************************
+			                    //*****************************************************************************
 								if (search(currentArgument) == -1)
 								{
 									//******** not found ***********
@@ -360,7 +360,7 @@ int main()
 							newVars++; 
 							
 							//*****************************************************************************
-			                                //*****************************************************************************
+			                //*****************************************************************************
 							
 						}
 						currentArgument = strtok(NULL, " ");   //continue to the next word >>>>
@@ -375,7 +375,7 @@ int main()
 				
 				
 				//*** add environment variables on array of structs as name and value  *********
-                                //******************************************************************************		
+                //******************************************************************************		
 				
 				for (int newVarsIterator = 0; newVarsIterator < newVars; newVarsIterator++)
 					construct(vars[newVarsIterator]);
@@ -444,16 +444,7 @@ int main()
 					
 				}
 				
-				//******** trying to exacute but no commands are passed *******
-				//*************************************************************
-				else
-				{
-					red();        
-					printf("you didn't pass any commands \n");
-					reset();
-				}			
-				//*************************************************************				
-				//*************************************************************			
+				
 			}
 	
 			
@@ -472,6 +463,7 @@ int main()
 		
 			else 
 			{
+	
 				FILE *pipe_fp, *infile;       //pointer to input and pipe files
 				char readbuf[80];             //buffer to pass data
 				char arg1   [50];             //string before |
