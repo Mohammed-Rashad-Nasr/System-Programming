@@ -463,7 +463,7 @@ int main()
 		
 			else 
 			{
-	
+	 
 				FILE *pipe_fp, *infile;       //pointer to input and pipe files
 				char readbuf[80];             //buffer to pass data
 				char arg1   [50];             //string before |
