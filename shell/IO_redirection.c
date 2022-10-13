@@ -133,7 +133,7 @@ void changeIn(char *path)
             
     }
     stdi = dup(fileno(stdin));                                //save the original stdin
-    if (stdin == -1 )
+    if (stdi == -1 )
     {
             //******** error in dup *******
             
