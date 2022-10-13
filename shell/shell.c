@@ -1,3 +1,37 @@
+/**********************************************************************************************************************
+ ********************************************************************************************************************
+ ********************************************************************************************************************
+ *  FILE DESCRIPTION
+ *  -----------------------------------------------------------------------------------------------------------------*/
+/**        \file  shell.c
+ *
+ *        \brief  this file contains main code runs when shell is executing 
+ *                 and uses functions defined in the other .c files
+ *
+ *      \details  shell.c 3.0v 
+ *                last edit ... 13 OCT 2022
+ *                author ...... mohammed rashad
+ *                
+ *                notes :
+ *                
+ *                - tab = 8 spaces 
+ *                - errors represented using errno and perror function
+ *                - the code divides line in semicolons to separate commands 
+ *                - built in functions : list , export used for listing and exporting environment vars
+ *                  and help for printing help msg
+ *                - note that shell is space sensetive x=5 and x = 5 are not equal 
+ *                  "don't separate variable name , value and equal operator by spaces"
+ *                - define the maximum values in the header file and it will be your responsibility to 
+ *                  don't exceed these limits
+ *
+ *
+ *********************************************************************************************************************
+ *********************************************************************************************************************
+ *********************************************************************************************************************/
+
+
+
+
 
 //******************* includes ***************************
 //********************************************************
@@ -21,7 +55,7 @@
 //********************************************************
 
 extern int varcount ;
-extern variable vararr[100];
+extern variable varArr[100];
 extern int out, in, err, stdi, stde, stdo;
 
 //********************************************************
@@ -48,7 +82,7 @@ int main()
     while (1) {
 				
 		//*****************************************************
-		char buffer[100]; //buffer to get all data from user **  
+		char buffer[MAX_LINE_LENGTH]; //buffer to get all data from user **  
 		//*****************************************************
 		
 		
@@ -64,7 +98,7 @@ int main()
 		//********************************************************
 		
 		
-		fgets(buffer, 100, stdin);          //get input into the buffer
+		fgets(buffer, MAX_LINE_LENGTH, stdin);          //get input into the buffer
 		
 		
 		//********************************************
@@ -85,7 +119,7 @@ int main()
 		//******** dividing into sentences ***********************
 		//********************************************************
 		
-		char *sentence[simicount(buffer)];           //semicount counts number of semicolons in the buffer to get number of sentences in the line
+		char *sentence[semicount(buffer)];           //semicount counts number of semicolons in the buffer to get number of sentences in the line
 		int  sentencesCounter  = 0;                  //initialize counter to count sentences 
 		char *sentenceDivider  = strtok(line, ";");  //dividing line into sentences
 		 
@@ -137,7 +171,8 @@ int main()
 			int  pipeFlag = ispipe(tmp);  //ispipe checks if there is piping in the sentence
 			
 			
-			if (!pipeFlag)                // first condition to be checked  if there is no piping go inside if there is piping skip all this code inside
+			if (!pipeFlag)                
+                        // first condition to be checked  if there is no piping go inside if there is piping skip all this code inside
 			{
 				
 				//*********************** if you are here this means the sentence has no piping in it ! ***************
@@ -165,7 +200,7 @@ int main()
 				int inRedirectionFlag  = 0;     //input  redirection flag detects if user typed <
 				
 				char *margv[argsCounter + 1];   //array of exec arguments
-				char *vars [100];               //array of environment variables stored as strings
+				char *vars [MAX_VARS_NUMBER];               //array of environment variables stored as strings
 				int  argsIterator = 0;          //iterator for margv
 		
 		
@@ -182,36 +217,46 @@ int main()
 					//****************** looping on words separated by spaces until the end of the sentence ***************
 					//*****************************************************************************************************
 			
-					if (currentArgument[0] != '#')     // check if this is a comment starting by # so it will skip all the sentence if no just go inside 
+					if (currentArgument[0] != '#')     
+                                        // check if this is a comment starting by # so it will skip all the sentence if no just go inside 
 					{ 
 					        //************************ it is not a comment ************************
 						//*********************************************************************
 						
-						if (!isenv(currentArgument))      // check if this is an environment variable if not continue inside 
+						if (!isenv(currentArgument))              
+                                                // check if this is an environment variable if not continue inside 
 						{
 							
 						       //************************ it is not an environment variable **********
 						       //*********************************************************************
 							
-							if (exportFlag == 0)             //check if this is an argument of export function by checking export flag which may be set in the previous word if not just continue inside
+							if (exportFlag == 0)             
+                                                        /*check if this is an argument of export function by checking export flag
+                                                          which may be set in the previous word if not just continue inside      */
 							{
 								
 								//****************** it is not export argument ************************
 								//*********************************************************************
 								
-								if (outRedirectionFlag == 0)       //check if this is an argument of output redirection function by checking output redirection flag which may be set in the previous word if not just continue inside
+								if (outRedirectionFlag == 0)       
+                                                                /*check if this is an argument of output redirection function by checking output 
+                                                                  redirection flag which may be set in the previous word if not just continue inside */
 								{
 									
 									//*************** it is not output redirection argument ***************
 									//*********************************************************************
 									
-									if (inRedirectionFlag == 0)         //check if this is an argument of input redirection function by checking input redirection flag which may be set in the previous word if not just continue inside
+									if (inRedirectionFlag == 0)         
+                                                                        /*check if this is an argument of input redirection function by checking input
+                                                                          redirection flag which may be set in the previous word if not just continue inside */
 									{
 										
 										//*************** it is not input redirection argument ****************
 										//*********************************************************************
 										
-										if (currentArgument[0] == '$')      //finally check if it is trying to access environment variable if yes do the following code if no continue
+										if (currentArgument[0] == '$')      
+                                                                                /*finally check if it is trying to access environment variable if yes 
+                                                                                  do the following code if no continue                               */
 										{
 											
 										//*************** access environment variable using $ operator ********
@@ -246,7 +291,8 @@ int main()
 												//*******************************
 											}
 											else 
-												margv [argsIterator++] = vararr[search(searcher)].value;  // search and put the value of the given name into arguments array
+											// search and put the value of the given name into arguments array
+                                                                                                margv [argsIterator++] = vararr[search(searcher)].value;
 											
 											
 											//*********************************************************************
@@ -255,19 +301,30 @@ int main()
 										}
 										
 										else if (strcmp(currentArgument, "export") == 0)
-											exportFlag = 1;                               // export word found set the export flag to take the following word as argument
+										// export word found set the export flag to take the following word as argument
+                                                                                        exportFlag = 1;                               
 										
 										else if (strcmp(currentArgument, "list"  ) == 0)
-											printvars();                                  // list word found print all the variables 
+										// list word found print all the variables 
+                                                                                        printvars();                 
+                                                                                
+                                                                                else if (strcmp(currentArgument, "help"  ) == 0)
+                                                                                // help word found print help msg        
+                                                                                        printhelp();                 
 					
 										else if (strcmp(currentArgument, ">"     ) == 0)
-											outRedirectionFlag = 1;                       // > character found set the output redirection flag to take the following word as argument
+										/* > character found set the output redirection flag to take the following 
+                                                                                     word as argument */
+                                                                                        outRedirectionFlag = 1;                       
 					
 										else if (strcmp(currentArgument, "<") == 0)
-											inRedirectionFlag = 1;                        // < character found set the input redirection flag to take the following word as argument
+										/* < character found set the input redirection flag to take the following
+                                                                                      word as argument	*/
+                                                                                        inRedirectionFlag = 1;                        
 										 
 										else
-											margv[argsIterator++] = currentArgument;      // no special thing just add the argument to the args array
+                                                                                // no special thing just add the argument to the args array                
+                                                                                        margv[argsIterator++] = currentArgument;      
 										
 									}
 									else 
@@ -313,7 +370,7 @@ int main()
 								}
 								else 
 								{
-									if (setenv(vararr[search(currentArgument)].name,vararr[search(currentArgument)].value, 1) != 0)    
+									if (setenv(vararr[search(currentArgument)].name,vararr[search(currentArgument)].value,1)!=0)    
 									{
 										//******** error in setenv *******
 										
@@ -340,7 +397,8 @@ int main()
 							//*****************************************************************************
 							
 							if (vars[newVars]==NULL)
-								vars[newVars] = (char *) malloc(strlen(currentArgument) * sizeof(char)); //allocate space for new variable if it is not already allocated
+								//allocate space for new variable if it is not already allocated
+                                                                vars[newVars] = (char *) malloc(strlen(currentArgument) * sizeof(char)); 
 							
 							
 							if (vars[newVars] == NULL)    
@@ -368,12 +426,13 @@ int main()
 					else
 						break;               //comment detected just skip everything and go to the next sentence please 
 					
-				}  
 				
+                                }//end of sentence parsing in while loop
 				//**********************************************************************	
 				//**********************************************************************
 				
 				
+                                
 				//*** add environment variables on array of structs as name and value  *********
                                 //******************************************************************************		
 				
@@ -433,7 +492,7 @@ int main()
 					//******************************
 					else
 					{
-						red();        
+					    red();        
 					    printf("fork did not work\n");
 					    perror("the error is ");
 					    reset();
@@ -442,10 +501,14 @@ int main()
 					//******************************
 					//******************************
 					
-				}
+				}//end of normal commands execution 
+                                //****************************************
+                                //****************************************
 				
 				
-			}
+			}//end of every thing which is not piping
+                        //****************************************
+                        //****************************************
 	
 			
 			
@@ -464,14 +527,14 @@ int main()
 			else 
 			{
 	
-				FILE *pipe_fp, *infile;       //pointer to input and pipe files
-				char readbuf[80];             //buffer to pass data
-				char arg1   [50];             //string before |
-				char arg2   [50];             //string after |
-		
-				char *currentArgument = strtok(tmp, "|");  
-				strcpy(arg1, currentArgument);             //get data before |
-				while (currentArgument != NULL) 
+				FILE *pipe_fp, *infile;                        //pointer to input and pipe files
+				char readbuf[MAX_PIPE_LENGTH];                 //buffer to pass data
+				char arg1   [MAX_PIPE_ARG1];                   //string before |
+				char arg2   [MAX_PIPE_ARG2];                   //string after |
+                                                                               
+				char *currentArgument = strtok(tmp, "|");      
+				strcpy(arg1, currentArgument);                 //get data before |
+				while (currentArgument != NULL)                
 				{
 					strcpy(arg2, currentArgument);         //get data after |
 					currentArgument = strtok(NULL, "|");
@@ -532,7 +595,30 @@ int main()
 				fflush(stdin);    
 				fflush(stdout);
 	
-			}
-		}
-        }
-}
+			} // end of piping
+                        //****************************************
+                        //****************************************
+                        
+
+		}//end of sentence in for loop
+                //****************************************
+                //****************************************
+                
+
+        }//end of the infinite loop
+        //****************************************
+        //****************************************
+
+
+}//end of main 
+//****************************************
+//****************************************
+
+
+
+
+
+
+/**********************************************************************************************************************
+ *  END OF FILE: shell.c
+ *********************************************************************************************************************/
