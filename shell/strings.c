@@ -88,7 +88,7 @@ int semicount(char *line)
 void printhelp()
 {
         cyan();
-        printf("hello in my amazing shell :)\n *********************** \n1-built in functions : \n- list : lists all stored variables \n- export : exports variable to global \n- help : prints this msg \n *********************** \n2- press enter to get new line \n3- note that shell is space sensetive so variables should be defined like this name=value without spaces \n4- use semicolons to enter multiple commands in single line  ");
+        printf("hello in my amazing shell :)\n *********************** \n1-built in functions : \n- list : lists all stored variables \n- export : exports variable to global \n- help : prints this msg \n *********************** \n2- press enter to get new line \n3- note that shell is space sensetive so variables should be defined like this name=value without spaces \n4- use semicolons to enter multiple commands in single line \n");
         reset();
         
 }
