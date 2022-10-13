@@ -370,7 +370,7 @@ int main()
 								}
 								else 
 								{
-									if (setenv(vararr[search(currentArgument)].name,vararr[search(currentArgument)].value,1)!=0)    
+									if (setenv(varArr[search(currentArgument)].name,varArr[search(currentArgument)].value,1)!=0)    
 									{
 										//******** error in setenv *******
 										
