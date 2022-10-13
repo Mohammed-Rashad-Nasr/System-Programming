@@ -48,6 +48,7 @@ extern void green       ();
 extern void reset       ();
 extern void cyan        ();
 extern int  semicount   (char *c);
+extern void printhelp   ();
 //********************************************************
 //********************************************************
 
