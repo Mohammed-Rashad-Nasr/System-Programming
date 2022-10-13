@@ -181,7 +181,7 @@ int countenv(char * line)
 void printvars()
 {
     for (int iterator = 0; iterator < varcount; iterator++)
-	printf("%d  name : %s  value : %s\n", iterator, vararr[iterator].name,varArr[iterator].value);
+	printf("%d  name : %s  value : %s\n", iterator, varArr[iterator].name,varArr[iterator].value);
 }
 //***************************************************
 //***************************************************
