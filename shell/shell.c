@@ -292,7 +292,7 @@ int main()
 											}
 											else 
 											// search and put the value of the given name into arguments array
-                                                                                                margv [argsIterator++] = vararr[search(searcher)].value;
+                                                                                                margv [argsIterator++] = varArr[search(searcher)].value;
 											
 											
 											//*********************************************************************
