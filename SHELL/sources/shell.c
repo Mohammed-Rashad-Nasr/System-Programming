@@ -198,6 +198,7 @@ int main()
 				int exportFlag         = 0;     //export command flag will be raised when user use the command
 				int outRedirectionFlag = 0;     //output redirection flag detects if user typed >
 				int inRedirectionFlag  = 0;     //input  redirection flag detects if user typed <
+                                int cdflag             = 0;     //cd command flag
 				
 				char *margv[argsCounter + 1];   //array of exec arguments
 				char *vars [MAX_VARS_NUMBER];               //array of environment variables stored as strings
@@ -253,80 +254,126 @@ int main()
 										
 										//*************** it is not input redirection argument ****************
 										//*********************************************************************
-										
-										if (currentArgument[0] == '$')      
-                                                                                /*finally check if it is trying to access environment variable if yes 
-                                                                                  do the following code if no continue                               */
-										{
-											
-										//*************** access environment variable using $ operator ********
-									        //*********************************************************************
-											
-											
-											// replace $name by name to search for it *****************************
-											
-											char searcher[strlen(currentArgument)];
-											int  searchCounter = 1;
-											
-											while (currentArgument[searchCounter] != '\0') 
-											{
-												
-												searcher[searchCounter - 1] = currentArgument[searchCounter];
-												searchCounter++;
-												
-											}
-											
-											searcher[searchCounter - 1] = '\0';
-											
-											//*********************************************************************
-											
-											if (search(searcher) == -1)    
-											{
-												//******** not found ***********
-												
-												red();        
-												printf("element not found \n");
-												reset();
-												
-												//*******************************
-											}
-											else 
-											// search and put the value of the given name into arguments array
-                                                                                                margv [argsIterator++] = varArr[search(searcher)].value;
-											
-											
-											//*********************************************************************
-											//*********************************************************************
-											
-										}
-										
-										else if (strcmp(currentArgument, "export") == 0)
-										// export word found set the export flag to take the following word as argument
-                                                                                        exportFlag = 1;                               
-										
-										else if (strcmp(currentArgument, "list"  ) == 0)
-										// list word found print all the variables 
-                                                                                        printvars();                 
                                                                                 
-                                                                                else if (strcmp(currentArgument, "help"  ) == 0)
-                                                                                // help word found print help msg        
-                                                                                        printhelp();                 
-					
-										else if (strcmp(currentArgument, ">"     ) == 0)
-										/* > character found set the output redirection flag to take the following 
-                                                                                     word as argument */
-                                                                                        outRedirectionFlag = 1;                       
-					
-										else if (strcmp(currentArgument, "<") == 0)
-										/* < character found set the input redirection flag to take the following
-                                                                                      word as argument	*/
-                                                                                        inRedirectionFlag = 1;                        
-										 
-										else
-                                                                                // no special thing just add the argument to the args array                
-                                                                                        margv[argsIterator++] = currentArgument;      
+                                                                                if (ccdflag == 0)
+										/*check if this is an argument of cd function by checking cd flag
+                                                                                  which may be set in the previous word if not just continue inside      */
+                                                                                {
+                                                                                        //****************** it is not cd argument ****************************
+                                                                                        //*********************************************************************
+                                                                                        
+                                                                                        if (currentArgument[0] == '$')      
+                                                                                        /*finally check if it is trying to access environment variable if yes 
+                                                                                        do the following code if no continue                               */
+                                                                                        {
+                                                                                                
+                                                                                        //*************** access environment variable using $ operator ********
+                                                                                        //*********************************************************************
+                                                                                                
+                                                                                                
+                                                                                                // replace $name by name to search for it *****************************
+                                                                                                
+                                                                                                char searcher[strlen(currentArgument)];
+                                                                                                int  searchCounter = 1;
+                                                                                                
+                                                                                                while (currentArgument[searchCounter] != '\0') 
+                                                                                                {
+                                                                                                        
+                                                                                                        searcher[searchCounter - 1] = currentArgument[searchCounter];
+                                                                                                        searchCounter++;
+                                                                                                        
+                                                                                                }
+                                                                                                
+                                                                                                searcher[searchCounter - 1] = '\0';
+                                                                                                
+                                                                                                //*********************************************************************
+                                                                                                
+                                                                                                if (search(searcher) == -1)    
+                                                                                                {
+                                                                                                        //******** not found ***********
+                                                                                                        
+                                                                                                        red();        
+                                                                                                        printf("element not found \n");
+                                                                                                        reset();
+                                                                                                        
+                                                                                                        //*******************************
+                                                                                                }
+                                                                                                else 
+                                                                                                // search and put the value of the given name into arguments array
+                                                                                                        margv [argsIterator++] = varArr[search(searcher)].value;
+                                                                                                
+                                                                                                
+                                                                                                //*********************************************************************
+                                                                                                //*********************************************************************
+                                                                                                
+                                                                                        }
+                                                                                        
+                                                                                        else if (strcmp(currentArgument, "export") == 0)
+                                                                                        // export word found set the export flag to take the following word as argument
+                                                                                                exportFlag = 1;                               
+                                                                                        
+                                                                                        else if (strcmp(currentArgument, "list"  ) == 0)
+                                                                                        // list word found print all the variables 
+                                                                                                printvars();                 
+                                                                                        
+                                                                                        else if (strcmp(currentArgument, "help"  ) == 0)
+                                                                                        // help word found print help msg        
+                                                                                                printhelp();     
+                                                                                        
+                                                                                        else if (strcmp(currentArgument, "cd"  ) == 0)
+                                                                                        // cd word found take the following input as argument        
+                                                                                                cdflag=1;
+                                                
+                                                                                        else if (strcmp(currentArgument, ">"     ) == 0)
+                                                                                        /* > character found set the output redirection flag to take the following 
+                                                                                        word as argument */
+                                                                                                outRedirectionFlag = 1;                       
+                                                
+                                                                                        else if (strcmp(currentArgument, "<") == 0)
+                                                                                        /* < character found set the input redirection flag to take the following
+                                                                                        word as argument	*/
+                                                                                                inRedirectionFlag = 1;    
+                                                                                                
+                                                                                        
+                                                                                        else
+                                                                                        // no special thing just add the argument to the args array                
+                                                                                                margv[argsIterator++] = currentArgument;      
 										
-									}
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                        //*** cd flag raised change dir to the given path ********
+                                                                                        //********************************************************
+                                                                                        
+                                                                                        if (chdir(currentArgument)==-1)
+                                                                                        {
+                                                                                        	//******** error in chdir *******
+                                                                                        	
+                                                                                        	red();        
+                                                                                        	printf("can not go to %s \n",currentArgument);
+                                                                                        	perror("the error is ");
+                                                                                        	reset();
+                                                                                        	
+                                                                                        	//*******************************
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                                //******** dir changed *********
+                                                                                                
+                                                                                                cyan();        
+                                                                                                printf("new dir : %s \n",currentArgument);
+                                                                                                reset();
+                                                                                                
+                                                                                                //*******************************
+                                                                                        }
+                                                                                        cdflag=0;
+                                                                                        
+                                                                                        //********************************************************
+                                                                                        //********************************************************
+                                                                               
+                                                                                }
+                                                                        
+                                                                        }
 									else 
 									{
 										//*** input redirection flag raised redirect input to the given path ********
