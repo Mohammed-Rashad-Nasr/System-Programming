@@ -359,9 +359,10 @@ int main()
                                                                                         else
                                                                                         {
                                                                                                 //******** dir changed *********
-                                                                                                
+                                                                                                char cwd[100] ;
+												getwd(cwd);
                                                                                                 cyan();        
-                                                                                                printf("new dir : %s \n",currentArgument);
+                                                                                                printf("new dir : %s \n",cwd);
                                                                                                 reset();
                                                                                                 
                                                                                                 //*******************************
