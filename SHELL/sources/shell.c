@@ -255,7 +255,7 @@ int main()
 										//*************** it is not input redirection argument ****************
 										//*********************************************************************
                                                                                 
-                                                                                if (ccdflag == 0)
+                                                                                if (cdflag == 0)
 										/*check if this is an argument of cd function by checking cd flag
                                                                                   which may be set in the previous word if not just continue inside      */
                                                                                 {
