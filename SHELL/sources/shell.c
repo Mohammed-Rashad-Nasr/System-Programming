@@ -200,11 +200,11 @@ int main()
 				int inRedirectionFlag  = 0;     //input  redirection flag detects if user typed <
                                 int cdflag             = 0;     //cd command flag
 				
-				char *margv[argsCounter + 1];   //array of exec arguments
+				char *margv[argsCounter + 1];               //array of exec arguments
 				char *vars [MAX_VARS_NUMBER];               //array of environment variables stored as strings
-				int  argsIterator = 0;          //iterator for margv
-		
-		
+				int  argsIterator = 0;                       //iterator for margv
+		                vars[0]  = NULL;
+		                
 		
 		
                                 //***** divide sentence on space for checking and using them ***********	
@@ -429,6 +429,7 @@ int main()
 										
 										//*******************************
 									}
+                                                                        varArr[search(currentArgument)].global=1;
 								}
 								
 								exportFlag = 0;          //reset flag
@@ -444,6 +445,7 @@ int main()
 							//*** this an environment variable not an argument so add it to vars  *********
 							//*****************************************************************************
 							
+
 							if (vars[newVars]==NULL)
 								//allocate space for new variable if it is not already allocated
                                                                 vars[newVars] = (char *) malloc(strlen(currentArgument) * sizeof(char)); 
@@ -521,7 +523,6 @@ int main()
 					//******************************
 					else if (ret == 0)
 					{
-		
 						execvp(command, margv);   //execution
 						
 						//******** if code here execute then exec failed *********

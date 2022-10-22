@@ -31,6 +31,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "header.h"    //my header file
 
 //********************************************************
@@ -126,6 +127,7 @@ void construct(char * element)
 	    strcpy(varArr[varcount].value, div);   //value
 	    div = strtok(NULL, "=");
 	}
+        varArr[varcount].global=0;
 	varcount++;                                //increase number of vars 
     } 
     //***************************************************************
@@ -143,6 +145,19 @@ void construct(char * element)
         {
 	    strcpy(varArr[search(varname)].value, div);
 	    div = strtok(NULL, "=");
+	}
+	if(varArr[search(varname)].global==1)
+	{
+	    if (setenv(varArr[search(varname)].name,varArr[search(varname)].value,1)!=0)    
+	    {
+		//******** error in setenv *******							
+		red();        
+	        printf("not set \n");
+		perror("the error is ");
+		reset();
+										
+		//*******************************
+	    }
 	}
 
     }
