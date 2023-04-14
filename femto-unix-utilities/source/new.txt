@@ -1,8 +1,0 @@
-mcp.c
-mecho.c
-mmv.c
-mpwd.c
-out.txt
-shell
-shell.c
-shell.c~
